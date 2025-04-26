@@ -13,6 +13,10 @@ poetry-core = "^2.1.2"
 alembic = "^1.15.2"
 alembic-postgresql-enum = "^1.7.0"
 pydantic-settings = "^2.9.1"
+ruff = "^0.11.7"
+dishka = "^1.5.3"
+psycopg2-binary = "^2.9.10"
+passlib = "^1.7.4"
 
 
 [build-system]

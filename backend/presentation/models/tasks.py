@@ -18,6 +18,7 @@ class Task:
     status: TaskStatus
     description: str | None = None
 
+
 @dataclass
 class UpdateTask:
     title: str
