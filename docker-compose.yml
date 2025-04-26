@@ -1,0 +1,25 @@
+services:
+  backend:
+    container_name: backend
+    build:
+      context: .
+    volumes:
+      - .:/app/
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    entrypoint: ["sh", "./scripts/entrypoint.sh"]
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: tasks_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+
+
+volumes:
+  postgres_data:
