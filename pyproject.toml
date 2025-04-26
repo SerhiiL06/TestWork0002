@@ -9,6 +9,10 @@ readme = "README.md"
 python = "^3.12"
 fastapi = "^0.115.12"
 uvicorn = "^0.34.2"
+poetry-core = "^2.1.2"
+alembic = "^1.15.2"
+alembic-postgresql-enum = "^1.7.0"
+pydantic-settings = "^2.9.1"
 
 
 [build-system]
