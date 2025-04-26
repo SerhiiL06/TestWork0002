@@ -12,11 +12,11 @@ class PasswordService:
         password_errors = {}
 
         if not self.compare(pw1, pw2):
-            password_errors["password"] = "compare password error"
+            password_errors["password"] = "Passwords do not match"
             return password_errors
 
         if len(pw1) < 8:
-            password_errors["length"] = "password mush have min 8 length"
+            password_errors["length"] = "Password must be at least 8 characters long"
 
         return password_errors
 

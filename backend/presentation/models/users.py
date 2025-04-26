@@ -4,4 +4,5 @@ from dataclasses import dataclass
 @dataclass
 class RegisterUser:
     email: str
-    hashed_password: str
+    password_1: str
+    password_2: str
