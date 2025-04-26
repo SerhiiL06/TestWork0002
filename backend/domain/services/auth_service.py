@@ -8,7 +8,7 @@ from backend.domain.repositories.user_repo import UserRepository
 from backend.domain.services.password_service import PasswordService
 from backend.domain.services.token_service import TokenService
 
-bearer = OAuth2PasswordBearer(tokenUrl="auth/login")
+bearer = OAuth2PasswordBearer(tokenUrl="/login")
 
 
 class AuthService:
@@ -21,7 +21,6 @@ class AuthService:
         self._repo = repo
         self._pwd = password_service
         self._token = token
-
 
     async def login(self, email: str, password: str, session: AsyncSession) -> dict:
         instance = await self._repo.get(email, session)

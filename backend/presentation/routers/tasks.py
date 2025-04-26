@@ -1,12 +1,13 @@
 from fastapi import APIRouter
 
+from backend.presentation.common.factories import current_user
 from backend.presentation.models.tasks import CreateTask, UpdateTask
 
 tasks_router = APIRouter()
 
 
 @tasks_router.get("/tasks")
-async def get_tasks(): ...
+async def get_tasks(user: current_user): ...
 
 
 @tasks_router.get("/tasks/search")

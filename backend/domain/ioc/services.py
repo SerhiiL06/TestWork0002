@@ -29,7 +29,6 @@ class ServiceProvider(Provider):
     def provide_token_service(self) -> TokenService:
         return TokenService()
 
-
     @provide(scope=Scope.REQUEST)
     def provide_auth_service(
         self,
