@@ -3,9 +3,11 @@ from typing import Annotated
 from dishka import Provider, provide, Scope, FromComponent
 from passlib.context import CryptContext
 
+from backend.domain.repositories.task_repo import TaskRepository
 from backend.domain.repositories.user_repo import UserRepository
 from backend.domain.services.auth_service import AuthService
 from backend.domain.services.password_service import PasswordService
+from backend.domain.services.task_service import TaskService
 from backend.domain.services.token_service import TokenService
 from backend.domain.services.user_service import UserService
 
@@ -37,3 +39,9 @@ class ServiceProvider(Provider):
         token_service: TokenService,
     ) -> AuthService:
         return AuthService(repo, password_service, token_service)
+
+    @provide(scope=Scope.REQUEST)
+    def provide_task_service(
+        self, repo: Annotated[TaskRepository, FromComponent("R")]
+    ) -> TaskService:
+        return TaskService(repo)

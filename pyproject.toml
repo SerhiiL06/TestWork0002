@@ -13,7 +13,6 @@ poetry-core = "^2.1.2"
 alembic = "^1.15.2"
 alembic-postgresql-enum = "^1.7.0"
 pydantic-settings = "^2.9.1"
-ruff = "^0.11.7"
 dishka = "^1.5.3"
 psycopg2-binary = "^2.9.10"
 passlib = "^1.7.4"
@@ -23,6 +22,10 @@ bcrypt = "^4.3.0"
 pyjwt = "^2.10.1"
 python-multipart = "^0.0.20"
 
+
+[tool.poetry.group.dev.dependencies]
+isort = "^6.0.1"
+ruff = "^0.11.7"
 
 [build-system]
 requires = ["poetry-core"]

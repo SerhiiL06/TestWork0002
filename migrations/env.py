@@ -6,6 +6,7 @@ from sqlalchemy import pool
 from alembic import context
 from backend.infra.database.models.base import Base
 from backend.infra.database.models.users import User
+from backend.infra.database.models.tasks import Task
 
 from backend.infra.settings import env_config
 

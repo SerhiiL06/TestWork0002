@@ -11,16 +11,8 @@ class CreateTask:
 
 
 @dataclass
-class Task:
-    id: int
-    title: str
-    priority: int
-    status: TaskStatus
-    description: str | None = None
-
-
-@dataclass
 class UpdateTask:
+    id: int
     title: str
     priority: int
     status: TaskStatus
