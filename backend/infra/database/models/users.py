@@ -10,6 +10,7 @@ class User(Base):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str]
     email: Mapped[str] = mapped_column(String(320), unique=True)
     hashed_password: Mapped[str]
 

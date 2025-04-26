@@ -38,7 +38,7 @@ class UserService:
         hashed_password = password_service.hashing(user_data.password_2)
 
         user_id = await self._repo.create(
-            User(email=user_data.email, hashed_password=hashed_password), session
+            User(name=user_data.name, email=user_data.email, hashed_password=hashed_password), session
         )
         await session.commit()
 
