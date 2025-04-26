@@ -1,7 +1,10 @@
-from sqlalchemy import select, update, Sequence
+from sqlalchemy import select, update, Sequence, or_
+
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.sql.operators import ge, le
 
 from backend.infra.database.models.tasks import Task
+from backend.presentation.models.filters import TaskFilter
 
 
 class TaskRepository:
@@ -10,9 +13,34 @@ class TaskRepository:
         return result.scalars().one_or_none()
 
     async def get_by_owner(
-        self, owner_id: int, session: AsyncSession
+        self,
+        owner_id: int,
+        session: AsyncSession,
+        filters: TaskFilter | None = None,
+        text: str | None = None,
     ) -> Sequence[Task]:
         q = select(Task).where(Task.owner_id == owner_id)
+
+        if filters and filters.status:
+            q = q.where(Task.status == filters.status)
+
+        if filters and filters.priority:
+            q = q.where(Task.priority == filters.priority)
+
+        if filters and filters.date_gte:
+            q = q.where(ge(Task.created_at, filters.date_gte))
+
+        if filters and filters.date_lte:
+            q = q.where(le(Task.created_at, filters.date_lte))
+
+        if text:
+            q = q.where(
+                or_(
+                    Task.title.icontains(text),
+                    Task.description.icontains(text),
+                )
+            )
+
         result = await session.execute(q)
         return result.scalars().all()
 

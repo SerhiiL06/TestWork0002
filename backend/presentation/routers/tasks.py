@@ -1,13 +1,18 @@
+from datetime import datetime
+from typing import Literal
+
 from dishka import FromDishka
 from dishka.integrations.fastapi import inject
-from fastapi import APIRouter
+from fastapi import APIRouter, Path
+from fastapi.params import Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.domain.services.task_service import TaskService
 from backend.presentation.common.factories import current_user
+from backend.presentation.models.filters import TaskFilter
 from backend.presentation.models.tasks import CreateTask, UpdateTask
 
-tasks_router = APIRouter()
+tasks_router = APIRouter(tags=["tasks"])
 
 
 @tasks_router.get("/tasks")
@@ -16,16 +21,25 @@ async def get_tasks(
     user: current_user,
     session: FromDishka[AsyncSession],
     service: FromDishka[TaskService],
+    status: Literal["PENDING", "DONE"] | None = None,
+    priority: int | None = None,
+    date_gte: datetime | None = None,
+    date_lte: datetime | None = None,
 ):
-    return await service.get_user_tasks(user.get("user_id"), session)
+    return await service.get_user_tasks(
+        user.get("user_id"), session, TaskFilter(status, priority, date_gte, date_lte)
+    )
 
 
 @tasks_router.get("/tasks/search")
-async def search_tasks(): ...
-
-
-@tasks_router.get("/tasks/{task_id}")
-async def get_task(task_id: int): ...
+@inject
+async def search_tasks(
+    user: current_user,
+    session: FromDishka[AsyncSession],
+    service: FromDishka[TaskService],
+    q: str = Query(alias="title/description", required=False, default=None),
+):
+    return await service.get_user_tasks(user.get("user_id"), session, text=q)
 
 
 @tasks_router.post("/tasks")

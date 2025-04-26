@@ -7,6 +7,7 @@ from starlette.responses import JSONResponse
 
 from backend.domain.repositories.task_repo import TaskRepository
 from backend.infra.database.models.tasks import Task
+from backend.presentation.models.filters import TaskFilter
 from backend.presentation.models.tasks import CreateTask, UpdateTask
 
 
@@ -14,8 +15,14 @@ class TaskService:
     def __init__(self, repo: TaskRepository):
         self._repo = repo
 
-    async def get_user_tasks(self, user_id: int, session: AsyncSession) -> list[Task]:
-        return await self._repo.get_by_owner(user_id, session)
+    async def get_user_tasks(
+        self,
+        user_id: int,
+        session: AsyncSession,
+        filters: TaskFilter | None = None,
+        text: str | None = None,
+    ) -> list[Task]:
+        return await self._repo.get_by_owner(user_id, session, filters, text)
 
     async def create_task(
         self, task: CreateTask, owner_id: int, session: AsyncSession
