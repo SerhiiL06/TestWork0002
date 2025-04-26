@@ -10,5 +10,7 @@ class Settings(BaseSettings):
     POSTGRES_HOST: str
     POSTGRES_PORT: str
 
+    SECRET_KEY: str
+
 
 env_config = Settings()

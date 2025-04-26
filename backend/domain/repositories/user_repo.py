@@ -5,6 +5,10 @@ from backend.infra.database.models.users import User
 
 
 class UserRepository:
+    async def get(self, email: str, session: AsyncSession) -> User:
+        result = await session.execute(select(User).where(User.email == email))
+        return result.scalars().first()
+
     async def create(self, user: User, session: AsyncSession) -> int:
         session.add(user)
         await session.flush([user])

@@ -20,11 +20,3 @@ async def register(
     password_service: FromDishka[PasswordService],
 ):
     return await service.register(data, password_service, session)
-
-
-@users_router.post("/login")
-async def login(): ...
-
-
-@users_router.get("/refresh")
-async def refresh(): ...

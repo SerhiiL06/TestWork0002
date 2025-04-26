@@ -4,7 +4,9 @@ from dishka import Provider, provide, Scope, FromComponent
 from passlib.context import CryptContext
 
 from backend.domain.repositories.user_repo import UserRepository
+from backend.domain.services.auth_service import AuthService
 from backend.domain.services.password_service import PasswordService
+from backend.domain.services.token_service import TokenService
 from backend.domain.services.user_service import UserService
 
 
@@ -22,3 +24,16 @@ class ServiceProvider(Provider):
         self, repo: Annotated[UserRepository, FromComponent("R")]
     ) -> UserService:
         return UserService(repo)
+
+    @provide(scope=Scope.REQUEST)
+    def provide_token_service(self) -> TokenService:
+        return TokenService()
+
+    @provide(scope=Scope.REQUEST)
+    def provide_auth_service(
+        self,
+        repo: Annotated[UserRepository, FromComponent("R")],
+        password_service: PasswordService,
+        token_service: TokenService,
+    ) -> AuthService:
+        return AuthService(repo, password_service, token_service)
