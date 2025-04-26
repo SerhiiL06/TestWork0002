@@ -1,3 +1,5 @@
+from dataclasses import asdict
+
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
@@ -11,6 +13,9 @@ from backend.presentation.models.tasks import CreateTask, UpdateTask
 class TaskService:
     def __init__(self, repo: TaskRepository):
         self._repo = repo
+
+    async def get_user_tasks(self, user_id: int, session: AsyncSession) -> list[Task]:
+        return await self._repo.get_by_owner(user_id, session)
 
     async def create_task(
         self, task: CreateTask, owner_id: int, session: AsyncSession
@@ -36,21 +41,52 @@ class TaskService:
         )
 
     async def update_task(
-            self, task: UpdateTask, user_id: int, session: AsyncSession
+        self, task_id: int, task: UpdateTask, user_id: int, session: AsyncSession
     ):
+        task_instance = await self._repo.get(task_id, session)
 
+        if not task_instance or task_instance.owner_id != user_id:
+            raise HTTPException(status_code=404, detail="Not found")
 
         errors = await self._validate_task(task)
 
+        if errors:
+            raise HTTPException(status_code=400, detail=errors)
 
+        task_data = await self._clear_data(task)
+
+        await self._repo.update(task_instance.id, task_data, session)
+        await session.flush([task_instance])
+        await session.commit()
+        return JSONResponse(
+            content={
+                "task": {
+                    "id": task_instance.id,
+                    "title": task_instance.title,
+                    "description": task_instance.description,
+                    "priority": task_instance.priority,
+                    "status": task_instance.status.name,
+                }
+            },
+            status_code=status.HTTP_200_OK,
+        )
+
+    async def _clear_data(self, task: UpdateTask) -> dict:
+        data = {}
+
+        for k, v in asdict(task).items():
+            if v:
+                data[k] = v
+
+        return data
 
     async def _validate_task(self, task: CreateTask | UpdateTask) -> dict:
         errors = {}
 
-        if len(task.title) > 250:
+        if task.title and len(task.title) > 250:
             errors["title"] = "Task title too long"
 
-        if task.priority not in range(1, 6):
+        if task.priority and task.priority not in range(1, 6):
             errors["priority"] = "Task priority must be between 1 and 5"
 
         if task.description and len(task.description) > 2000:

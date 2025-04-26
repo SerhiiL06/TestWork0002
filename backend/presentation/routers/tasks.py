@@ -11,7 +11,13 @@ tasks_router = APIRouter()
 
 
 @tasks_router.get("/tasks")
-async def get_tasks(): ...
+@inject
+async def get_tasks(
+    user: current_user,
+    session: FromDishka[AsyncSession],
+    service: FromDishka[TaskService],
+):
+    return await service.get_user_tasks(user.get("user_id"), session)
 
 
 @tasks_router.get("/tasks/search")
@@ -34,4 +40,12 @@ async def create_task(
 
 
 @tasks_router.put("/tasks/{task_id}")
-async def update_task(task_id: str, task: UpdateTask): ...
+@inject
+async def update_task(
+    task_id: int,
+    task: UpdateTask,
+    user: current_user,
+    session: FromDishka[AsyncSession],
+    service: FromDishka[TaskService],
+):
+    return await service.update_task(task_id, task, user.get("user_id"), session)
