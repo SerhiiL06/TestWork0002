@@ -20,12 +20,13 @@ class UserService:
         password_service: PasswordService,
         session: AsyncSession,
     ) -> JSONResponse:
-
         exists = await self._repo.exists(user_data.email, session)
 
         if exists:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered")
-
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email already registered",
+            )
 
         incorrect = password_service.validate_password(
             user_data.password_1, user_data.password_2
@@ -41,4 +42,6 @@ class UserService:
         )
         await session.commit()
 
-        return JSONResponse(status_code=status.HTTP_201_CREATED, content={"user_id": user_id})
+        return JSONResponse(
+            status_code=status.HTTP_201_CREATED, content={"user_id": user_id}
+        )
