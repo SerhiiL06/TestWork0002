@@ -19,22 +19,52 @@ class AuthService:
         token: TokenService,
     ) -> None:
         self._repo = repo
-        self.pwd = password_service
-        self.token = token
+        self._pwd = password_service
+        self._token = token
+
 
     async def login(self, email: str, password: str, session: AsyncSession) -> dict:
         instance = await self._repo.get(email, session)
 
-        if not instance or self.pwd.verify(password, instance.hashed_password) is False:
+        if (
+            not instance
+            or self._pwd.verify(password, instance.hashed_password) is False
+        ):
             raise HTTPException(401, "wrong password or email")
 
         payload = {
             "user_id": instance.id,
             "email": instance.email,
         }
-        token = self.token.create_token(payload)
-        return token
+        access = self._token.create_access_token(payload)
+        refresh = self._token.create_refresh_token(payload)
+
+        return {
+            "access_token": access,
+            "refresh_token": refresh,
+            "token_type": "bearer",
+        }
+
+    async def refresh_token(
+        self, token: str, token_service: TokenService, session: AsyncSession
+    ) -> dict:
+        user_data = token_service.get_user_data(token, "refresh_token")
+
+        if not user_data:
+            raise HTTPException(401, "invalid token")
+
+        instance = await self._repo.get(user_data.get("email"), session)
+
+        if not instance:
+            raise HTTPException(401, "Invalid token")
+
+        payload = {
+            "user_id": instance.id,
+            "email": instance.email,
+        }
+        access = self._token.create_access_token(payload)
+        return {"access_token": access, "refresh_token": token, "token_type": "bearer"}
 
     def authenticate(self, token: Annotated[str, Depends(bearer)]):
-        user_data = self.token.get_token(token)
+        user_data = self._token.get_user_data(token)
         return user_data
