@@ -3,7 +3,7 @@ from typing import Literal
 
 from dishka import FromDishka
 from dishka.integrations.fastapi import inject
-from fastapi import APIRouter, Path
+from fastapi import APIRouter
 from fastapi.params import Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -37,7 +37,7 @@ async def search_tasks(
     user: current_user,
     session: FromDishka[AsyncSession],
     service: FromDishka[TaskService],
-    q: str = Query(alias="title/description", required=False, default=None),
+    q: str = Query(required=False, default=None, description="Search by title and description"),
 ):
     return await service.get_user_tasks(user.get("user_id"), session, text=q)
 

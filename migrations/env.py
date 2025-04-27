@@ -1,13 +1,11 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-
 from alembic import context
-from backend.infra.database.models.base import Base
-from backend.infra.database.models.users import User
-from backend.infra.database.models.tasks import Task
+from sqlalchemy import engine_from_config, pool
 
+from backend.infra.database.models.base import Base
+from backend.infra.database.models.tasks import Task  # noqa F401
+from backend.infra.database.models.users import User  # noqa F401
 from backend.infra.settings import env_config
 
 # this is the Alembic Config object, which provides

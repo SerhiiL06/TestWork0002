@@ -1,6 +1,4 @@
-import datetime as dt
 from datetime import datetime, timedelta
-from os import access
 
 import jwt
 from fastapi import HTTPException

@@ -1,7 +1,6 @@
 from typing import Annotated, AsyncGenerator
 
 from dishka import FromComponent, Provider, Scope, provide
-
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.infra.database.connection import DatabaseCORE

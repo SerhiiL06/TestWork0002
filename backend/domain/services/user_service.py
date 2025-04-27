@@ -1,6 +1,4 @@
-from http.client import HTTPResponse
-
-from fastapi import HTTPException, status, Response
+from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 

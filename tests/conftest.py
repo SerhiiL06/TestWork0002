@@ -1,5 +1,5 @@
 import pytest_asyncio
-from dishka import make_async_container, AsyncContainer
+from dishka import AsyncContainer, make_async_container
 from dishka.integrations.fastapi import setup_dishka
 from fastapi import FastAPI
 from httpx import ASGITransport

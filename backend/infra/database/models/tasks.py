@@ -1,8 +1,8 @@
 from datetime import datetime
 
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import ENUM
+from sqlalchemy.orm import Mapped, mapped_column
 
 from backend.common.enums import TaskStatus
 from backend.infra.database.models.base import Base

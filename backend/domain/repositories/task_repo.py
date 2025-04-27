@@ -1,5 +1,4 @@
-from sqlalchemy import select, update, Sequence, or_
-
+from sqlalchemy import Sequence, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql.operators import ge, le
 

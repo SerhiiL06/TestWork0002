@@ -1,5 +1,5 @@
 import pytest
-from httpx import AsyncClient, ASGITransport
+from httpx import ASGITransport, AsyncClient
 
 
 @pytest.mark.asyncio
@@ -27,16 +27,16 @@ async def test_register(transport: ASGITransport) -> None:
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         response = await ac.post("/register", json=correct_user)
         assert response.status_code == 201
-        assert bool(response.json().get("user_id")) == True
+        assert bool(response.json().get("user_id"))
 
         response = await ac.post("/register", json=diff_passwords)
         assert response.status_code == 400
-        assert bool(response.json().get("detail", {}).get("password")) == True
+        assert bool(response.json().get("detail", {}).get("password"))
 
         response = await ac.post("/register", json=short_pw)
         assert response.status_code == 400
-        assert bool(response.json().get("detail", {}).get("length")) == True
+        assert bool(response.json().get("detail", {}).get("length"))
 
         response = await ac.post("/register", json=already_exists)
         assert response.status_code == 400
-        assert bool(response.json().get("detail", {}).get("email")) == True
+        assert response.json().get("detail", {}).get("email")

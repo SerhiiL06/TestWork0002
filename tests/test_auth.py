@@ -1,5 +1,5 @@
 import pytest
-from httpx import AsyncClient, ASGITransport
+from httpx import ASGITransport, AsyncClient
 
 
 @pytest.mark.asyncio
@@ -12,9 +12,9 @@ async def test_login(transport: ASGITransport, user: dict) -> None:
             data={"username": user.get("email"), "password": user.get("password_1")},
         )
         assert response.status_code == 200
-        assert bool(response.json().get("access_token")) == True
-        assert bool(response.json().get("refresh_token")) == True
-        assert bool(response.json().get("token_type")) == True
+        assert bool(response.json().get("access_token"))
+        assert bool(response.json().get("refresh_token"))
+        assert bool(response.json().get("token_type"))
 
         response = await ac.post(
             "/login",
@@ -37,9 +37,9 @@ async def test_refresh(transport: ASGITransport, user: dict) -> None:
 
         response = await ac.post("/refresh", data={"token": refresh_token})
         assert response.status_code == 200
-        assert bool(response.json().get("access_token")) == True
-        assert bool(response.json().get("refresh_token")) == True
-        assert bool(response.json().get("token_type")) == True
+        assert bool(response.json().get("access_token"))
+        assert bool(response.json().get("refresh_token"))
+        assert bool(response.json().get("token_type"))
 
         wrong_refresh = "my_token"
         response = await ac.post("/refresh", data={"token": wrong_refresh})

@@ -1,7 +1,6 @@
 import pytest
-
+from httpx import ASGITransport, AsyncClient
 from pytest import fixture
-from httpx import AsyncClient, ASGITransport
 
 
 @fixture
@@ -23,20 +22,14 @@ async def auth_headers(access_token: str) -> dict:
     }
 
 
-@pytest.mark.asyncio
-async def test_get_tasks(transport: ASGITransport, auth_headers: dict) -> None:
-    async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        response_without_token = await ac.get(url="/tasks")
-        assert response_without_token.status_code == 401
+@fixture
+def correct_task() -> dict:
+    return {"title": "test", "description": "test", "priority": 1}
 
-        response = await ac.get(url="/tasks", headers=auth_headers)
-        assert response.status_code == 200
-        assert response.json().get("tasks") == []
 
 
 @pytest.mark.asyncio
-async def test_create_task(transport: ASGITransport, auth_headers: dict) -> None:
-    correct_task = {"title": "test", "description": "test", "priority": 1}
+async def test_create_task(transport: ASGITransport, auth_headers: dict, correct_task: dict) -> None:
     invalid_task = {"title": "test", "description": "test", "priority": 0}
 
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
@@ -59,4 +52,61 @@ async def test_create_task(transport: ASGITransport, auth_headers: dict) -> None
         )
 
         assert response.status_code == 400
-        assert bool(response.json().get("detail").get("priority")) == True
+        assert bool(response.json().get("detail").get("priority"))
+
+@pytest.mark.asyncio
+async def test_get_tasks(transport: ASGITransport, auth_headers: dict) -> None:
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        response_without_token = await ac.get(url="/tasks")
+        assert response_without_token.status_code == 401
+
+        response = await ac.get(url="/tasks", headers=auth_headers)
+        assert response.status_code == 200
+        assert len(response.json().get("tasks")) == 1
+
+
+        response = await ac.get(url="/tasks", headers=auth_headers, params={"priority": 2})
+        assert response.status_code == 200
+        assert len(response.json().get("tasks")) == 0
+
+        response = await ac.get(url="/tasks", headers=auth_headers, params={"status": "PENDING"})
+        assert response.status_code == 200
+        assert len(response.json().get("tasks")) == 1
+
+
+
+@pytest.mark.asyncio
+async def test_update_task(transport: ASGITransport, auth_headers: dict, correct_task: dict) -> None:
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        response_without_token = await ac.get(url="/tasks")
+        assert response_without_token.status_code == 401
+
+        response = await ac.get(url="/tasks", headers=auth_headers)
+        task_id = response.json()["tasks"][0].get("id")
+        response = await ac.put(url=f"/tasks/{task_id}", headers=auth_headers, json={"status": "DONE"})
+        assert response.status_code == 200
+        assert response.json().get('task').get("status") == "DONE"
+
+        response = await ac.put(url=f"/tasks/{task_id}", headers=auth_headers, json={"status": "TEST"})
+        assert response.status_code == 422
+
+        response = await ac.put(url=f"/tasks/{task_id}", headers=auth_headers, json={"priority": "10"})
+        assert response.status_code == 400
+
+
+@pytest.mark.asyncio
+async def test_search_task(transport: ASGITransport, auth_headers: dict, correct_task: dict) -> None:
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        response_without_token = await ac.get(url="/tasks/search")
+        assert response_without_token.status_code == 401
+
+
+        response = await ac.get(url="/tasks/search", headers=auth_headers, params={"q": "test"})
+        assert response.status_code == 200
+        assert len(response.json().get("tasks")) == 1
+
+        response = await ac.get(url="/tasks/search", headers=auth_headers, params={"q": "random"})
+        assert response.status_code == 200
+        assert len(response.json().get("tasks")) == 0
+
+

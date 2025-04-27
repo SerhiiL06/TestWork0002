@@ -42,9 +42,9 @@ class AuthService:
         }
 
     async def refresh_token(
-        self, token: str, token_service: TokenService, session: AsyncSession
+        self, token: str, session: AsyncSession
     ) -> dict:
-        user_data = token_service.get_data_from_token(token, "refresh_token")
+        user_data = self._token.get_data_from_token(token, "refresh_token")
 
         if not user_data:
             raise HTTPException(401, "invalid token")
@@ -61,6 +61,6 @@ class AuthService:
         access = self._token.create_access_token(payload)
         return {"access_token": access, "refresh_token": token, "token_type": "bearer"}
 
-    def authenticate(self, token: Annotated[str, Depends(bearer)]):
+    def authenticate(self, token: Annotated[str, Depends(bearer)]) -> dict:
         user_data = self._token.get_data_from_token(token)
         return user_data

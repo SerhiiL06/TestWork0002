@@ -1,4 +1,4 @@
-from dishka import provide, Scope, Provider
+from dishka import Provider, Scope, provide
 
 from backend.domain.repositories.task_repo import TaskRepository
 from backend.domain.repositories.user_repo import UserRepository

@@ -7,7 +7,6 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.domain.services.auth_service import AuthService
-from backend.domain.services.token_service import TokenService
 
 auth_router = APIRouter(tags=["auth"])
 
@@ -26,8 +25,7 @@ async def login(
 @inject
 async def refresh(
     session: FromDishka[AsyncSession],
-    token_service: FromDishka[TokenService],
     service: FromDishka[AuthService],
     token: str = Form(None),
 ):
-    return await service.refresh_token(token, token_service, session)
+    return await service.refresh_token(token, session)

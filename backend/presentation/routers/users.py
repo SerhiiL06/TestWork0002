@@ -1,12 +1,11 @@
 from dishka import FromDishka
 from dishka.integrations.fastapi import inject
+from fastapi import APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.domain.services.password_service import PasswordService
 from backend.domain.services.user_service import UserService
 from backend.presentation.models.users import RegisterUser
-from fastapi import APIRouter, Depends, Request
-
 
 users_router = APIRouter(tags=["users"])
 

@@ -1,5 +1,6 @@
-from fastapi import Depends
 from typing import Annotated
+
+from fastapi import Depends
 
 from backend.domain.ioc.providers import sync_container
 from backend.domain.services.auth_service import AuthService

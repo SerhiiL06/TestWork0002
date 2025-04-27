@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from dishka import Provider, provide, Scope, FromComponent
+from dishka import FromComponent, Provider, Scope, provide
 from passlib.context import CryptContext
 
 from backend.domain.repositories.task_repo import TaskRepository
