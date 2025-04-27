@@ -1,18 +1,9 @@
 import pytest
-from fastapi import FastAPI
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from pytest import fixture
 from httpx import AsyncClient, ASGITransport
 
 
-@fixture
-def transport(app: FastAPI) -> ASGITransport:
-    return ASGITransport(app)
-
-
 @pytest.mark.asyncio
-async def test_register(session: AsyncSession, transport: ASGITransport) -> None:
+async def test_register(transport: ASGITransport) -> None:
     correct_user = {
         "name": "test",
         "email": "admin@gmail.com",

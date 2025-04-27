@@ -1,30 +1,9 @@
 import pytest
-from fastapi import FastAPI
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from pytest import fixture
 from httpx import AsyncClient, ASGITransport
 
 
-@fixture
-def transport(app: FastAPI) -> ASGITransport:
-    return ASGITransport(app)
-
-
-@fixture
-def user() -> dict:
-    return {
-        "name": "test",
-        "email": "test@gmail.com",
-        "password_1": "string_1",
-        "password_2": "string_1",
-    }
-
-
 @pytest.mark.asyncio
-async def test_login(
-    session: AsyncSession, transport: ASGITransport, user: dict
-) -> None:
+async def test_login(transport: ASGITransport, user: dict) -> None:
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         await ac.post(url="/register", json=user)
 
@@ -45,9 +24,7 @@ async def test_login(
 
 
 @pytest.mark.asyncio
-async def test_refresh(
-    session: AsyncSession, transport: ASGITransport, user: dict
-) -> None:
+async def test_refresh(transport: ASGITransport, user: dict) -> None:
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         await ac.post(url="/register", json=user)
 

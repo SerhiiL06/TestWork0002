@@ -21,8 +21,10 @@ class TaskService:
         session: AsyncSession,
         filters: TaskFilter | None = None,
         text: str | None = None,
-    ) -> list[Task]:
-        return await self._repo.get_by_owner(user_id, session, filters, text)
+    ) -> dict[str, list[Task]]:
+        tasks = await self._repo.get_by_owner(user_id, session, filters, text)
+
+        return {"tasks": tasks}
 
     async def create_task(
         self, task: CreateTask, owner_id: int, session: AsyncSession

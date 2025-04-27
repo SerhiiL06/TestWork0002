@@ -11,14 +11,14 @@ from backend.infra.settings import env_config
 class TokenService:
     def create_access_token(self, payload: dict) -> str:
         access_payload = payload.copy()
-        access_payload["exp"] = datetime.now() + timedelta(minutes=5)
-        token = jwt.encode(access_payload, env_config.SECRET_KEY, algorithm="HS256")
+        access_payload["exp"] = datetime.now() + timedelta(minutes=15)
+        token = jwt.encode(access_payload, env_config.SECRET_KEY)
         return token
 
     def create_refresh_token(self, payload: dict) -> str:
         refresh_payload = payload.copy()
         refresh_payload["exp"] = datetime.now() + timedelta(days=10)
-        token = jwt.encode(refresh_payload, env_config.SECRET_KEY, algorithm="HS256")
+        token = jwt.encode(refresh_payload, env_config.SECRET_KEY)
         return token
 
     def get_data_from_token(self, token: str, token_type: str = "access_token") -> dict:
@@ -28,5 +28,4 @@ class TokenService:
             raise HTTPException(401, "Invalid token")
         except jwt.exceptions.ExpiredSignatureError as _:
             raise HTTPException(401, f"{token_type} was expired")
-
         return user_data
