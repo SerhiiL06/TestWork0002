@@ -12,7 +12,7 @@ from backend.domain.services.token_service import TokenService
 auth_router = APIRouter(tags=["auth"])
 
 
-@auth_router.post("/login", tags=["auth"])
+@auth_router.post("/login")
 @inject
 async def login(
     session: FromDishka[AsyncSession],

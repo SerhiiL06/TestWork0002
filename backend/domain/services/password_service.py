@@ -1,6 +1,3 @@
-import string
-from random import randint
-
 from passlib.context import CryptContext
 
 

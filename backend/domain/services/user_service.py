@@ -25,7 +25,7 @@ class UserService:
         if exists:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Email already registered",
+                detail={"email": "Email already registered"},
             )
 
         incorrect = password_service.validate_password(
