@@ -4,6 +4,7 @@ from dishka.integrations.fastapi import setup_dishka
 from fastapi import FastAPI
 from httpx import ASGITransport
 from pytest import fixture
+from sqlalchemy import URL, create_engine
 
 from backend.domain.ioc.repositories import RepositoryProvider
 from backend.domain.ioc.services import ServiceProvider
@@ -12,12 +13,14 @@ from backend.infra.database.models.base import Base
 from backend.presentation.routers.auth import auth_router
 from backend.presentation.routers.tasks import tasks_router
 from backend.presentation.routers.users import users_router
-from tests.database import test_core, test_engine
-from tests.providers import MockDatabaseProvider
+from tests.common.providers import MockDatabaseProvider
 
 
 @fixture(scope="session", autouse=True)
 def setup_db():
+    db_url = URL.create(drivername="sqlite", database="test.sqlite3")
+    test_engine = create_engine(db_url)
+
     Base.metadata.create_all(test_engine)
     yield
     Base.metadata.drop_all(test_engine)
