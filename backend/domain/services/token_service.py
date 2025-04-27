@@ -21,18 +21,10 @@ class TokenService:
         token = jwt.encode(refresh_payload, env_config.SECRET_KEY, algorithm="HS256")
         return token
 
-    def get_user_data(self, token: str, token_type: str = "access_token") -> dict:
+    def get_data_from_token(self, token: str, token_type: str = "access_token") -> dict:
         try:
-            user_data = jwt.decode(
-                token, env_config.SECRET_KEY, algorithms=["HS256"], leeway=3600
-            )
+            user_data = jwt.decode(token, env_config.SECRET_KEY, algorithms=["HS256"])
         except jwt.exceptions.ExpiredSignatureError as _:
             raise HTTPException(401, f"{token_type} was expired")
 
-        self._verify_token(user_data)
-
         return user_data
-
-    def _verify_token(self, token_payload: dict) -> None:
-        if datetime.fromtimestamp(token_payload.get("exp")) < datetime.now():
-            raise jwt.exceptions.DecodeError("Token was expired")

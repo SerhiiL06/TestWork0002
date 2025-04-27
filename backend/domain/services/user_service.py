@@ -35,18 +35,17 @@ class UserService:
         if incorrect:
             raise HTTPException(status_code=400, detail=incorrect)
 
-        hashed_password = password_service.hashing(user_data.password_2)
+        hashed_password = password_service.hash_pw(user_data.password_2)
 
-        user_id = await self._repo.create(
-            User(
-                name=user_data.name,
-                email=user_data.email,
-                hashed_password=hashed_password,
-            ),
-            session,
+        user_instance = User(
+            name=user_data.name,
+            email=user_data.email,
+            hashed_password=hashed_password,
         )
+
+        await self._repo.create(user_instance, session)
         await session.commit()
 
         return JSONResponse(
-            status_code=status.HTTP_201_CREATED, content={"user_id": user_id}
+            status_code=status.HTTP_201_CREATED, content={"user_id": user_instance.id}
         )

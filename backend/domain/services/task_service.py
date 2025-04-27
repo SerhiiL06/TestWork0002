@@ -40,7 +40,6 @@ class TaskService:
         )
 
         await self._repo.create(task_instance, session)
-        await session.flush([task_instance])
         await session.commit()
 
         return JSONResponse(
@@ -63,7 +62,7 @@ class TaskService:
         task_data = await self._clear_data(task)
 
         await self._repo.update(task_instance.id, task_data, session)
-        await session.flush([task_instance])
+
         await session.commit()
         return JSONResponse(
             content={
@@ -93,7 +92,7 @@ class TaskService:
         if task.title and len(task.title) > 250:
             errors["title"] = "Task title too long"
 
-        if task.priority and task.priority not in range(1, 6):
+        if task.priority is not None and task.priority not in range(1, 6):
             errors["priority"] = "Task priority must be between 1 and 5"
 
         if task.description and len(task.description) > 2000:

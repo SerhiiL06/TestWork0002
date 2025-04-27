@@ -24,8 +24,8 @@ class PasswordService:
     def compare(first: str, second: str) -> bool:
         return first == second
 
-    def hashing(self, pw: str) -> str:
+    def hash_pw(self, pw: str) -> str:
         return self.bcrypt.hash(pw)
 
-    def verify(self, secret: str, hashed: str) -> bool:
+    def verify_pw(self, secret: str, hashed: str) -> bool:
         return self.bcrypt.verify(secret, hashed)

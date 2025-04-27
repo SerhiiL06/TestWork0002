@@ -21,17 +21,18 @@ class TaskRepository:
     ) -> Sequence[Task]:
         q = select(Task).where(Task.owner_id == owner_id)
 
-        if filters and filters.status:
-            q = q.where(Task.status == filters.status)
+        if filters:
+            if filters.status:
+                q = q.where(Task.status == filters.status)
 
-        if filters and filters.priority:
-            q = q.where(Task.priority == filters.priority)
+            if filters.priority:
+                q = q.where(Task.priority == filters.priority)
 
-        if filters and filters.date_gte:
-            q = q.where(ge(Task.created_at, filters.date_gte))
+            if filters.date_gte:
+                q = q.where(ge(Task.created_at, filters.date_gte))
 
-        if filters and filters.date_lte:
-            q = q.where(le(Task.created_at, filters.date_lte))
+            if filters.date_lte:
+                q = q.where(le(Task.created_at, filters.date_lte))
 
         if text:
             q = q.where(
