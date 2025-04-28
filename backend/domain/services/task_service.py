@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 from starlette.responses import JSONResponse
 
+from backend.domain.exceptions import PermissionDenied
 from backend.domain.repositories.task_repo import TaskRepository
 from backend.infra.database.models.tasks import Task
 from backend.presentation.models.filters import TaskFilter
@@ -54,7 +55,7 @@ class TaskService:
         task_instance = await self._repo.get(task_id, session)
 
         if not task_instance or task_instance.owner_id != user_id:
-            raise HTTPException(status_code=404, detail="Not found")
+            raise PermissionDenied()
 
         errors = await self._validate_task(task)
 

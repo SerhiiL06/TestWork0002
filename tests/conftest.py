@@ -6,6 +6,7 @@ from httpx import ASGITransport
 from pytest import fixture
 from sqlalchemy import URL, create_engine
 
+from backend.domain import exceptions as ext
 from backend.domain.ioc.repositories import RepositoryProvider
 from backend.domain.ioc.services import ServiceProvider
 from backend.domain.ioc.session import SessionProvider
@@ -44,6 +45,12 @@ def app(dishka: AsyncContainer) -> FastAPI:
     app_.include_router(users_router)
     app_.include_router(auth_router)
     app_.include_router(tasks_router)
+
+    app_.add_exception_handler(ext.UserAlreadyExists, ext.user_already_exists_handler)
+    app_.add_exception_handler(ext.UserNotFound, ext.user_not_found_handler)
+    app_.add_exception_handler(ext.PermissionDenied, ext.permission_denied_handler)
+    app_.add_exception_handler(ext.Unauthorized, ext.unauthorized_handler)
+
     setup_dishka(dishka, app_)
     return app_
 

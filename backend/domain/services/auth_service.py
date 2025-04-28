@@ -4,6 +4,7 @@ from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from backend.domain.exceptions import Unauthorized, UserNotFound
 from backend.domain.repositories.user_repo import UserRepository
 from backend.domain.services.password_service import PasswordService
 from backend.domain.services.token_service import TokenService
@@ -26,7 +27,7 @@ class AuthService:
         instance = await self._repo.get(email, session)
 
         if not instance or not self._pwd.verify_pw(password, instance.hashed_password):
-            raise HTTPException(401, "wrong password or email")
+            raise UserNotFound(email=email)
 
         payload = {
             "user_id": instance.id,
@@ -41,18 +42,16 @@ class AuthService:
             "token_type": "bearer",
         }
 
-    async def refresh_token(
-        self, token: str, session: AsyncSession
-    ) -> dict:
+    async def refresh_token(self, token: str, session: AsyncSession) -> dict:
         user_data = self._token.get_data_from_token(token, "refresh_token")
 
         if not user_data:
-            raise HTTPException(401, "invalid token")
+            raise Unauthorized()
 
         instance = await self._repo.get(user_data.get("email"), session)
 
         if not instance:
-            raise HTTPException(401, "Invalid token")
+            raise Unauthorized()
 
         payload = {
             "user_id": instance.id,

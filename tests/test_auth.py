@@ -20,7 +20,7 @@ async def test_login(transport: ASGITransport, user: dict) -> None:
             "/login",
             data={"username": user.get("email"), "password": "random_password"},
         )
-        assert response.status_code == 401
+        assert response.status_code == 404
 
 
 @pytest.mark.asyncio

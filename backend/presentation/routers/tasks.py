@@ -37,7 +37,9 @@ async def search_tasks(
     user: current_user,
     session: FromDishka[AsyncSession],
     service: FromDishka[TaskService],
-    q: str = Query(required=False, default=None, description="Search by title and description"),
+    q: str = Query(
+        required=False, default=None, description="Search by title and description"
+    ),
 ):
     return await service.get_user_tasks(user.get("user_id"), session, text=q)
 

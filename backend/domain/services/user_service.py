@@ -2,6 +2,7 @@ from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from backend.domain.exceptions import UserAlreadyExists
 from backend.domain.repositories.user_repo import UserRepository
 from backend.domain.services.password_service import PasswordService
 from backend.infra.database.models.users import User
@@ -21,10 +22,7 @@ class UserService:
         exists = await self._repo.exists(user_data.email, session)
 
         if exists:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail={"email": "Email already registered"},
-            )
+            raise UserAlreadyExists(user_data.email)
 
         incorrect = password_service.validate_password(
             user_data.password_1, user_data.password_2

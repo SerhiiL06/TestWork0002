@@ -39,4 +39,4 @@ async def test_register(transport: ASGITransport) -> None:
 
         response = await ac.post("/register", json=already_exists)
         assert response.status_code == 400
-        assert response.json().get("detail", {}).get("email")
+        assert response.json().get("msg")
