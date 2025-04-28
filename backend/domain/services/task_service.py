@@ -1,4 +1,5 @@
 from dataclasses import asdict
+from logging import getLogger
 
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,6 +11,8 @@ from backend.domain.repositories.task_repo import TaskRepository
 from backend.infra.database.models.tasks import Task
 from backend.presentation.models.filters import TaskFilter
 from backend.presentation.models.tasks import CreateTask, UpdateTask
+
+logger = getLogger(__name__)
 
 
 class TaskService:
@@ -45,6 +48,7 @@ class TaskService:
         await self._repo.create(task_instance, session)
         await session.commit()
 
+        logger.info(f"Created task {task_instance.id}")
         return JSONResponse(
             status_code=status.HTTP_201_CREATED, content={"task_id": task_instance.id}
         )
@@ -67,6 +71,8 @@ class TaskService:
         await self._repo.update(task_instance.id, task_data, session)
 
         await session.commit()
+
+        logger.info(f"Updated task {task_instance.id}")
         return JSONResponse(
             content={
                 "task": {
@@ -81,6 +87,12 @@ class TaskService:
         )
 
     async def _clear_data(self, task: UpdateTask) -> dict:
+        """
+        Builds a dictionary containing only fields with non-empty values.
+
+        Converts the `task` object to a dictionary and excludes any key-value pairs
+        where the value is considered "empty" (`None`, `0`, `''`).
+        """
         data = {}
 
         for k, v in asdict(task).items():

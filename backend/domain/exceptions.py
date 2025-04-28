@@ -29,8 +29,7 @@ class PermissionDenied(Exception):
 
 
 def permission_denied_handler(request: Request, exc: PermissionDenied) -> JSONResponse:
-    error_msg = f"Permission denied"
-    return JSONResponse({"msg": error_msg}, status_code=status.HTTP_403_FORBIDDEN)
+    return JSONResponse({"msg": "Permission denied"}, status_code=status.HTTP_403_FORBIDDEN)
 
 
 class Unauthorized(Exception):
@@ -38,5 +37,4 @@ class Unauthorized(Exception):
 
 
 def unauthorized_handler(request: Request, exc: Unauthorized) -> JSONResponse:
-    error_msg = f"Unauthorized"
-    return JSONResponse({"msg": error_msg}, status_code=status.HTTP_401_UNAUTHORIZED)
+    return JSONResponse({"msg": "Unauthorized"}, status_code=status.HTTP_401_UNAUTHORIZED)
