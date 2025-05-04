@@ -37,7 +37,7 @@ Use the provided example file:
 
 ```env
 POSTGRES_DB=tasks_db
-POSTGRES_USERNAME=username
+POSTGRES_USER=username
 POSTGRES_PASSWORD=password
 POSTGRES_HOST=postgres
 POSTGRES_PORT=5432

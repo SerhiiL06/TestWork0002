@@ -3,18 +3,23 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+from backend.domain.ioc.providers import sync_container
 from backend.infra.database.models.base import Base
 from backend.infra.database.models.tasks import Task  # noqa F401
 from backend.infra.database.models.users import User  # noqa F401
-from backend.infra.settings import env_config
+from backend.infra.settings import Settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
+
+with sync_container() as cont:
+    env_config = cont.get(Settings, "C")
+
 config = context.config
 
 section = config.config_ini_section
 
-config.set_section_option(section, "DB_USERNAME", env_config.POSTGRES_USERNAME)
+config.set_section_option(section, "DB_USERNAME", env_config.POSTGRES_USER)
 config.set_section_option(section, "DB_PASSWORD", env_config.POSTGRES_PASSWORD)
 config.set_section_option(section, "DB_HOST", env_config.POSTGRES_HOST)
 config.set_section_option(section, "DB_PORT", str(env_config.POSTGRES_PORT))

@@ -10,6 +10,7 @@ from backend.domain.services.password_service import PasswordService
 from backend.domain.services.task_service import TaskService
 from backend.domain.services.token_service import TokenService
 from backend.domain.services.user_service import UserService
+from backend.infra.settings import Settings
 
 
 class ServiceProvider(Provider):
@@ -28,8 +29,10 @@ class ServiceProvider(Provider):
         return UserService(repo)
 
     @provide(scope=Scope.REQUEST)
-    def provide_token_service(self) -> TokenService:
-        return TokenService()
+    def provide_token_service(
+        self, settings: Annotated[Settings, FromComponent("C")]
+    ) -> TokenService:
+        return TokenService(settings.SECRET_KEY)
 
     @provide(scope=Scope.REQUEST)
     def provide_auth_service(

@@ -1,22 +1,26 @@
-from dishka import Provider, Scope, provide
+from typing import Annotated
+
+from dishka import Provider, Scope, provide, FromComponent
 
 from backend.common.models import DatabaseDTO
 from backend.infra.database.connection import DatabaseCORE
-from backend.infra.settings import env_config
+from backend.infra.settings import Settings
 
 
 class DatabaseProvider(Provider):
     component = "D"
 
     @provide(scope=Scope.APP)
-    def postgres_database_data(self) -> DatabaseDTO:
+    def postgres_database_data(
+        self, settings: Annotated[Settings, FromComponent("C")]
+    ) -> DatabaseDTO:
         return DatabaseDTO(
             driver="postgresql+asyncpg",
-            db=env_config.POSTGRES_DB,
-            username=env_config.POSTGRES_USERNAME,
-            password=env_config.POSTGRES_PASSWORD,
-            host=env_config.POSTGRES_HOST,
-            port=env_config.POSTGRES_PORT,
+            db=settings.POSTGRES_DB,
+            username=settings.POSTGRES_USER,
+            password=settings.POSTGRES_PASSWORD,
+            host=settings.POSTGRES_HOST,
+            port=int(settings.POSTGRES_PORT),
         )
 
     @provide(scope=Scope.APP)

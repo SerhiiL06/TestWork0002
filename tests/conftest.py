@@ -7,6 +7,7 @@ from pytest import fixture
 from sqlalchemy import URL, create_engine
 
 from backend.domain import exceptions as ext
+from backend.domain.ioc.config import ConfigProvider
 from backend.domain.ioc.repositories import RepositoryProvider
 from backend.domain.ioc.services import ServiceProvider
 from backend.domain.ioc.session import SessionProvider
@@ -34,6 +35,7 @@ async def dishka():
         SessionProvider(),
         ServiceProvider(),
         RepositoryProvider(),
+        ConfigProvider(),
     )
     yield container
     await container.close()
