@@ -70,4 +70,12 @@ Then run the following command:
 python -m backend.presentation.web.main:app --reload
 ```
 
+## 📚 API Documentation (Swagger UI)
+
+Once the application is running, the interactive API documentation is available at:
+
+👉 http://localhost:8000/docs
+
+For the alternative ReDoc view: http://localhost:8000/redoc
+
 
