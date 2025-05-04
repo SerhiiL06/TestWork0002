@@ -1,3 +1,4 @@
+import re
 from logging import getLogger
 
 from fastapi import HTTPException, status
@@ -23,6 +24,10 @@ class UserService:
         password_service: PasswordService,
         session: AsyncSession,
     ) -> JSONResponse:
+
+        if not self._valid_email(user_data.email):
+            raise HTTPException(status_code=400, detail={"email": "Invalid email format"})
+
         exists = await self._repo.exists(user_data.email, session)
 
         if exists:
@@ -51,3 +56,6 @@ class UserService:
         return JSONResponse(
             status_code=status.HTTP_201_CREATED, content={"user_id": user_instance.id}
         )
+
+    async def _valid_email(self, email: str) -> bool:
+        return bool(re.match(r"^[\w\.-]+@[\w\.-]+\.\w{2,}$", email))
